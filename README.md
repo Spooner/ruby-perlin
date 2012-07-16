@@ -35,12 +35,7 @@ this could be used, but would be painfully slow for anything but tiny images.
 INSTALL
 -------
 
-    $ gem install perlin --pre
-
-Since the Windows binary gem only includes a version compatible with Ruby 1.9, users with Ruby 1.8 must compile
-the source gem (no dependencies other than the DevKit).
-
-    $ gem install perlin --pre --platform "ruby"
+    $ gem install perlin
 
 USAGE
 -----
