@@ -45,11 +45,6 @@ task :browse_yard => :yard do
   Launchy.open "doc/index.html" rescue nil
 end
 
-desc "Create platform-specific compiled gem"
-task :native_gem do
-  Rake::Task["native"].invoke "gem"
-end
-
 desc "Run benchmarks"
 task :bench => :compile do
   require File.expand_path("../bench/benchmarks.rb", __FILE__)

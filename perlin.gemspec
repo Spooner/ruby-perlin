@@ -16,7 +16,7 @@ A Perlin/Simplex noise implementation based of
   END
 
   s.email = %w<mojobojo@gmail.com>
-  s.files = Dir.glob %w<CHANGELOG LICENSE Rakefile README.md lib/**/*.{rb,yml}} lib ext/**/*.{c,h,rb} examples/**/*.*>
+  s.files = Dir.glob %w<CHANGELOG LICENSE Rakefile README.md lib/**/*.{rb,yml} lib ext/**/*.{c,h,rb} examples/**/*.* spec/**/*.*>
 
   # Only do this while creating a fat binary gem WHEN ON Windows!
   #####s.files << Dir["lib/**/*.so"]
@@ -25,7 +25,7 @@ A Perlin/Simplex noise implementation based of
   s.licenses = %w<MIT>
   s.extensions << 'ext/perlin/extconf.rb'
   s.rubyforge_project = 'ruby-perlin'
-  s.test_files = []
+  s.test_files = Dir['spec/**/*.*']
   s.has_rdoc = 'yard'
 
   s.add_development_dependency 'RedCloth', '~> 4.2.9'
