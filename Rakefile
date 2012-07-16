@@ -11,38 +11,9 @@ begin
 rescue LoadError
 end
 
-require File.expand_path('../lib/perlin/version', __FILE__)
-
 CLOBBER << "coverage"
 
-# somewhere in your Rakefile, define your gem spec
-spec = Gem::Specification.new do |s|
-  s.name = 'perlin'
-  s.version = Perlin::VERSION
-  s.date = Time.now.strftime '%Y-%m-%d'
-  s.authors = ["Brian 'bojo' Jones", 'Camille Goudeseune', 'Bil Bas']
-
-  s.summary = 'Perlin Noise C extension'
-  s.description = <<-END
-#{s.summary}
-
-A Perlin/Simplex noise implementation based of
-<http://freespace.virgin.net/hugo.elias/models/m_perlin.htm>. Implemented as a Ruby C extension.
-  END
-
-  s.email = %w<mojobojo@gmail.com>
-  s.files = Dir.glob %w<CHANGELOG LICENSE Rakefile README.md lib/**/*.* lib ext/**/*.* examples/**/*.*>
-  s.homepage = 'https://github.com/boj/ruby-perlin'
-  s.licenses = %w<MIT>
-  s.extensions << 'ext/perlin/extconf.rb'
-  s.rubyforge_project = 'ruby-perlin'
-  s.test_files = []
-  s.has_rdoc = 'yard'
-
-  s.add_development_dependency 'rake-compile', '~> 0.8.1'
-  s.add_development_dependency 'simplecov', '~> 0.6.4'
-  s.add_development_dependency 'launchy', '~> 2.1.0'
-end
+spec = Gem::Specification.load Dir["*.gemspec"][0]
 
 Gem::PackageTask.new spec do
 end
