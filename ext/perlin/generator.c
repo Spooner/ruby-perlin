@@ -341,13 +341,18 @@ VALUE Perlin_Generator_init(const int argc, const VALUE *argv, const VALUE self)
     VALUE seed, persistence, octave, options;
 
     rb_scan_args(argc, argv, "31", &seed, &persistence, &octave, &options);
-    if(NIL_P(options)) options = rb_hash_new();
-    Check_Type(options, T_HASH);
+    if(NIL_P(options))
+    {
+       options = rb_hash_new();
+    }
+    else
+    {
+       Check_Type(options, T_HASH);
+    }
 
     Perlin_Generator_set_seed(self, seed);
     Perlin_Generator_set_persistence(self, persistence);
     Perlin_Generator_set_octave(self, octave);
-
     Perlin_Generator_set_classic(self, rb_hash_aref(options, ID2SYM(rb_intern("classic"))));
 
     return self;
