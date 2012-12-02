@@ -14,11 +14,6 @@
 
 extern long seed;
 
-// Arbitrary number used to add an extra "seed" dimension for Simplex noise.
-// Seed 2D noise by offsetting the 3rd dimension.
-// Seed 3D noise by seeding with the 4th dimension.
-#define SEED_OFFSET -12354.1123f
-
 void Init_Perlin_Generator();
 
 // Getters.
@@ -49,8 +44,8 @@ VALUE Perlin_Generator_init(const int argc, const VALUE *argv, const VALUE self)
 typedef struct _PerlinGenerator
 {
     bool is_classic; // True if Classic, false if Simplex.
-    long seed;
-    unsigned int octave;
+    unsigned long seed; // >= 1
+    unsigned int octave; // >= 1
     double persistence;
 } PerlinGenerator;
 

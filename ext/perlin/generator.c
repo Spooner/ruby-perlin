@@ -134,7 +134,7 @@ VALUE Perlin_Generator_run2d(const VALUE self, const VALUE x, const VALUE y)
     else
     {
         return rb_float_new(octave_noise_3d(generator->octave, generator->persistence, 1.0, NUM2DBL(x), NUM2DBL(y),
-                            generator->seed * SEED_OFFSET));
+                            generator->seed));
     }
 }
 
@@ -153,7 +153,7 @@ VALUE Perlin_Generator_run3d(const VALUE self, const VALUE x, const VALUE y, con
     else
     {
         return rb_float_new(octave_noise_4d(generator->octave, generator->persistence, 1.0, NUM2DBL(x), NUM2DBL(y), NUM2DBL(z),
-                            generator->seed * SEED_OFFSET));
+                            generator->seed));
     }
 
 }
@@ -212,7 +212,7 @@ VALUE Perlin_Generator_chunk2d(const VALUE self, const VALUE x, const VALUE y, c
                 }
                 else
                 {
-                    rb_yield_values(3, rb_float_new(octave_noise_3d(generator->octave, generator->persistence, 1.0, _x, _y, generator->seed * SEED_OFFSET)),
+                    rb_yield_values(3, rb_float_new(octave_noise_3d(generator->octave, generator->persistence, 1.0, _x, _y, generator->seed)),
                                     rb_float_new(_x), rb_float_new(_y));
                 }
 
@@ -240,7 +240,7 @@ VALUE Perlin_Generator_chunk2d(const VALUE self, const VALUE x, const VALUE y, c
                 }
                 else
                 {
-                    rb_ary_push(row, rb_float_new(octave_noise_3d(generator->octave, generator->persistence, 1.0, _x, _y, generator->seed * SEED_OFFSET)));
+                    rb_ary_push(row, rb_float_new(octave_noise_3d(generator->octave, generator->persistence, 1.0, _x, _y, generator->seed)));
                 }
 
                 _y += _interval;
@@ -293,7 +293,7 @@ VALUE Perlin_Generator_chunk3d(const VALUE self, const VALUE x, const VALUE y, c
                     else
                     {
                         rb_yield_values(4,
-                                        rb_float_new(octave_noise_4d(generator->octave, generator->persistence, 1.0, _x, _y, _z, generator->seed * SEED_OFFSET)),
+                                        rb_float_new(octave_noise_4d(generator->octave, generator->persistence, 1.0, _x, _y, _z, generator->seed)),
                                         rb_float_new(_x), rb_float_new(_y), rb_float_new(_z));
                     }
 
@@ -326,7 +326,7 @@ VALUE Perlin_Generator_chunk3d(const VALUE self, const VALUE x, const VALUE y, c
                     else
                     {
                         rb_ary_push(column, rb_float_new(octave_noise_4d(generator->octave, generator->persistence, 1.0,
-                            _x, _y, _z, generator->seed * SEED_OFFSET)));
+                            _x, _y, _z, generator->seed)));
                     }
 
                     _z += _interval;
