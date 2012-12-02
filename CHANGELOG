@@ -1,9 +1,9 @@
-0.1.1
+0.1.2
 -----
 
-* Optmised C code to avoid use of Ruby ivars (up to 100% speed improvements).
+* Optmised C code to avoid use of slow Ruby ivars (up to 100% speed improvements!).
 
-0.1.0
+0.1.1
 -----
 
 * Converted to gem (previously was just a .c file).
