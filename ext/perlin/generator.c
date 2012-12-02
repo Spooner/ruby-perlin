@@ -1,23 +1,98 @@
 #include "generator.h"
 
+void Init_Perlin_Generator(VALUE module)
+{
+    VALUE rb_cPerlinGenerator = rb_define_class_under(module, "Generator", rb_cObject);
+    rb_define_alloc_func(rb_cPerlinGenerator, Perlin_Generator_allocate);
+
+    rb_define_method(rb_cPerlinGenerator, "initialize", Perlin_Generator_init, -1);
+
+    rb_define_method(rb_cPerlinGenerator, "seed", Perlin_Generator_get_seed, 0);
+    rb_define_method(rb_cPerlinGenerator, "persistence", Perlin_Generator_get_persistence, 0);
+    rb_define_method(rb_cPerlinGenerator, "octave", Perlin_Generator_get_octave, 0);
+    rb_define_method(rb_cPerlinGenerator, "classic?", Perlin_Generator_get_classic, 0);
+
+    rb_define_method(rb_cPerlinGenerator, "seed=", Perlin_Generator_set_seed, 1);
+    rb_define_method(rb_cPerlinGenerator, "persistence=", Perlin_Generator_set_persistence, 1);
+    rb_define_method(rb_cPerlinGenerator, "octave=", Perlin_Generator_set_octave, 1);
+    rb_define_method(rb_cPerlinGenerator, "classic=", Perlin_Generator_set_classic, 1);
+
+    rb_define_method(rb_cPerlinGenerator, "[]", Perlin_Generator_run, -1);
+    rb_define_method(rb_cPerlinGenerator, "run2d", Perlin_Generator_run2d, 2);
+    rb_define_method(rb_cPerlinGenerator, "run3d", Perlin_Generator_run3d, 3);
+
+    rb_define_method(rb_cPerlinGenerator, "chunk", Perlin_Generator_chunk, -1);
+    rb_define_method(rb_cPerlinGenerator, "chunk2d", Perlin_Generator_chunk2d, 5);
+    rb_define_method(rb_cPerlinGenerator, "chunk3d", Perlin_Generator_chunk3d, 7);
+}
+
+// Memory management.
+
+VALUE Perlin_Generator_allocate(VALUE klass)
+{
+    PerlinGenerator* generator = ALLOC(PerlinGenerator);
+    memset(generator, 0, sizeof(PerlinGenerator));
+
+    return Data_Wrap_Struct(klass, 0, Perlin_Generator_free, generator);
+}
+
+void Perlin_Generator_free(PerlinGenerator* generator)
+{
+    xfree(generator);
+}
+
+// Getters and setters.
+
 VALUE Perlin_Generator_set_seed(const VALUE self, const VALUE seed)
 {
-    rb_iv_set(self, "@seed", rb_funcall(seed, rb_intern("to_i"), 0));
+    GENERATOR();
+    generator->seed = NUM2LONG(seed);
+    return seed;
+}
+
+VALUE Perlin_Generator_get_seed(const VALUE self)
+{
+    GENERATOR();
+    return LONG2NUM(generator->seed);
 }
 
 VALUE Perlin_Generator_set_persistence(const VALUE self, const VALUE persistence)
 {
-   rb_iv_set(self, "@persistence", rb_funcall(persistence, rb_intern("to_f"), 0));
+    GENERATOR();
+    generator->persistence = NUM2DBL(persistence);
+    return persistence;
+}
+
+VALUE Perlin_Generator_get_persistence(const VALUE self)
+{
+    GENERATOR();
+    return rb_float_new(generator->persistence);
 }
 
 VALUE Perlin_Generator_set_octave(const VALUE self, const VALUE octave)
 {
-    rb_iv_set(self, "@octave", rb_funcall(octave, rb_intern("to_i"), 0));
+    GENERATOR();
+    generator->octave = NUM2UINT(octave);
+    return octave;
+}
+
+VALUE Perlin_Generator_get_octave(const VALUE self)
+{
+    GENERATOR();
+    return UINT2NUM(generator->octave);
 }
 
 VALUE Perlin_Generator_set_classic(const VALUE self, const VALUE classic)
 {
-    rb_iv_set(self, "@classic", classic);
+    GENERATOR();
+    generator->is_classic = RTEST(classic);
+    return classic;
+}
+
+VALUE Perlin_Generator_get_classic(const VALUE self)
+{
+    GENERATOR();
+    return (generator->is_classic ? Qtrue : Qfalse);
 }
 
 // x, y
@@ -30,16 +105,9 @@ VALUE Perlin_Generator_run(const int argc, const VALUE *argv, const VALUE self)
 
     switch(argc)
     {
-        case 2:
-            Perlin_Generator_run2d(self, x, y);
-            break;
-
-        case 3:
-            Perlin_Generator_run3d(self, x, y, z);
-            break;
-
-        default:
-            rb_raise(rb_eArgError, "%d parameters not supported (2D and 3D are)", argc);
+        case 2:  return Perlin_Generator_run2d(self, x, y);
+        case 3:  return Perlin_Generator_run3d(self, x, y, z);
+        default: rb_raise(rb_eArgError, "%d parameters not supported (2D and 3D are)", argc);
     }
 }
 
@@ -48,19 +116,17 @@ Takes points (x, y) and returns a height (n)
 */
 VALUE Perlin_Generator_run2d(const VALUE self, const VALUE x, const VALUE y)
 {
-    const float p = RFLOAT_VALUE(rb_iv_get(self, "@persistence"));
-    const int n = NUM2INT(rb_iv_get(self, "@octave"));
-    const VALUE classic = rb_iv_get(self, "@classic");
+    GENERATOR();
 
-    seed = NUM2LONG(rb_iv_get(self, "@seed")); // Store in global, for speed.
-
-    if(RTEST(classic))
+    if(generator->is_classic)
     {
-        return rb_float_new(perlin_octaves_2d(NUM2DBL(x), NUM2DBL(y), p, n));
+        seed = generator->seed; // Store in global, for speed.
+        return rb_float_new(perlin_octaves_2d(NUM2DBL(x), NUM2DBL(y), generator->persistence, generator->octave));
     }
     else
     {
-        return rb_float_new(octave_noise_3d(n, p, 1.0, NUM2DBL(x), NUM2DBL(y), seed * SEED_OFFSET));
+        return rb_float_new(octave_noise_3d(generator->octave, generator->persistence, 1.0, NUM2DBL(x), NUM2DBL(y),
+                            generator->seed * SEED_OFFSET));
     }
 }
 
@@ -69,19 +135,17 @@ Takes points (x, y, z) and returns a height (n)
 */
 VALUE Perlin_Generator_run3d(const VALUE self, const VALUE x, const VALUE y, const VALUE z)
 {
-    const float p = RFLOAT_VALUE(rb_iv_get(self, "@persistence"));
-    const int n = NUM2INT(rb_iv_get(self, "@octave"));
-    const VALUE classic = rb_iv_get(self, "@classic");
+    GENERATOR();
 
-    seed = NUM2LONG(rb_iv_get(self, "@seed")); // Store in global, for speed.
-
-    if(RTEST(classic))
+    if(generator->is_classic)
     {
-        return rb_float_new(perlin_octaves_3d(NUM2DBL(x), NUM2DBL(y), NUM2DBL(z), p, n));
+        seed = generator->seed; // Store in global, for speed.
+        return rb_float_new(perlin_octaves_3d(NUM2DBL(x), NUM2DBL(y), NUM2DBL(z), generator->persistence, generator->octave));
     }
     else
     {
-        return rb_float_new(octave_noise_4d(n, p, 1.0, NUM2DBL(x), NUM2DBL(y), NUM2DBL(z), seed * SEED_OFFSET));
+        return rb_float_new(octave_noise_4d(generator->octave, generator->persistence, 1.0, NUM2DBL(x), NUM2DBL(y), NUM2DBL(z),
+                            generator->seed * SEED_OFFSET));
     }
 
 }
@@ -96,16 +160,9 @@ VALUE Perlin_Generator_chunk(const int argc, const VALUE *argv, const VALUE self
 
     switch(argc)
     {
-        case 5:
-            Perlin_Generator_chunk2d(self, a, b, c, d, e);
-            break;
-
-        case 7:
-            Perlin_Generator_chunk3d(self, a, b, c, d, e, f, g);
-            break;
-
-        default:
-            rb_raise(rb_eArgError, "%d parameters not supported (5 for 2D and 7 for 3D are)", argc);
+        case 5:  return Perlin_Generator_chunk2d(self, a, b, c, d, e);
+        case 7:  return Perlin_Generator_chunk3d(self, a, b, c, d, e, f, g);
+        default: rb_raise(rb_eArgError, "%d parameters not supported (5 for 2D and 7 for 3D are)", argc);
     }
 }
 
@@ -114,9 +171,7 @@ Returns a chunk of coordinates starting from x, y and of size steps_x, steps_y w
 */
 VALUE Perlin_Generator_chunk2d(const VALUE self, const VALUE x, const VALUE y, const VALUE steps_x, const VALUE steps_y, const VALUE interval)
 {
-    const float p = RFLOAT_VALUE(rb_iv_get(self, "@persistence"));
-    const int n = NUM2INT(rb_iv_get(self, "@octave"));
-    const int is_classic = RTEST(rb_iv_get(self, "@classic"));
+    GENERATOR();
 
     VALUE arr, row;
     int i, j;
@@ -131,7 +186,7 @@ VALUE Perlin_Generator_chunk2d(const VALUE self, const VALUE x, const VALUE y, c
         rb_raise(rb_eArgError, "steps must be >= 1");
     }
 
-    seed = NUM2LONG(rb_iv_get(self, "@seed")); // Store in global, for speed.
+    if(generator->is_classic) seed = generator->seed; // Store in global, for speed.
 
     if(rb_block_given_p())
     {
@@ -142,14 +197,14 @@ VALUE Perlin_Generator_chunk2d(const VALUE self, const VALUE x, const VALUE y, c
            _y = y_min;
            for (j = 0; j < _steps_y; j++)
            {
-                if(is_classic)
+                if(generator->is_classic)
                 {
-                    rb_yield_values(3, rb_float_new(perlin_octaves_2d(_x, _y, p, n)),
+                    rb_yield_values(3, rb_float_new(perlin_octaves_2d(_x, _y, generator->persistence, generator->octave)),
                                     rb_float_new(_x), rb_float_new(_y));
                 }
                 else
                 {
-                    rb_yield_values(3, rb_float_new(octave_noise_3d(n, p, 1.0, _x, _y, seed * SEED_OFFSET)),
+                    rb_yield_values(3, rb_float_new(octave_noise_3d(generator->octave, generator->persistence, 1.0, _x, _y, generator->seed * SEED_OFFSET)),
                                     rb_float_new(_x), rb_float_new(_y));
                 }
 
@@ -171,13 +226,13 @@ VALUE Perlin_Generator_chunk2d(const VALUE self, const VALUE x, const VALUE y, c
             _y = y_min;
             for (j = 0; j < _steps_y; j++)
             {
-                if(is_classic)
+                if(generator->is_classic)
                 {
-                    rb_ary_push(row, rb_float_new(perlin_octaves_2d(_x, _y, p, n)));
+                    rb_ary_push(row, rb_float_new(perlin_octaves_2d(_x, _y, generator->persistence, generator->octave)));
                 }
                 else
                 {
-                    rb_ary_push(row, rb_float_new(octave_noise_3d(n, p, 1.0, _x, _y, seed * SEED_OFFSET)));
+                    rb_ary_push(row, rb_float_new(octave_noise_3d(generator->octave, generator->persistence, 1.0, _x, _y, generator->seed * SEED_OFFSET)));
                 }
 
                 _y += _interval;
@@ -194,9 +249,7 @@ Returns a chunk of coordinates starting from x, y, z and of size steps_x, steps_
 */
 VALUE Perlin_Generator_chunk3d(const VALUE self, const VALUE x, const VALUE y, const VALUE z, const VALUE steps_x, const VALUE steps_y, const VALUE steps_z, const VALUE interval)
 {
-    const float p = RFLOAT_VALUE(rb_iv_get(self, "@persistence"));
-    const int n = NUM2INT(rb_iv_get(self, "@octave"));
-    const int is_classic = RTEST(rb_iv_get(self, "@classic"));
+    GENERATOR();
 
     VALUE arr, row, column;
     int i, j, k;
@@ -211,7 +264,7 @@ VALUE Perlin_Generator_chunk3d(const VALUE self, const VALUE x, const VALUE y, c
         rb_raise(rb_eArgError, "steps must be >= 1");
     }
 
-    seed = NUM2LONG(rb_iv_get(self, "@seed")); // Store in global, for speed.
+    if(generator->is_classic) seed = generator->seed; // Store in global, for speed.
 
     if(rb_block_given_p())
     {
@@ -224,14 +277,15 @@ VALUE Perlin_Generator_chunk3d(const VALUE self, const VALUE x, const VALUE y, c
                 _z = z_min;
                 for (k = 0; k < _steps_z; k++)
                 {
-                    if(is_classic)
+                    if(generator->is_classic)
                     {
-                        rb_yield_values(4, rb_float_new(perlin_octaves_3d(_x, _y, _z, p, n)),
+                        rb_yield_values(4, rb_float_new(perlin_octaves_3d(_x, _y, _z, generator->persistence, generator->octave)),
                                         rb_float_new(_x), rb_float_new(_y), rb_float_new(_z));
                     }
                     else
                     {
-                        rb_yield_values(4, rb_float_new(octave_noise_4d(n, p, 1.0, _x, _y, _z, seed * SEED_OFFSET)),
+                        rb_yield_values(4,
+                                        rb_float_new(octave_noise_4d(generator->octave, generator->persistence, 1.0, _x, _y, _z, generator->seed * SEED_OFFSET)),
                                         rb_float_new(_x), rb_float_new(_y), rb_float_new(_z));
                     }
 
@@ -257,13 +311,14 @@ VALUE Perlin_Generator_chunk3d(const VALUE self, const VALUE x, const VALUE y, c
                 _z = z_min;
                 for (k = 0; k < _steps_z; k++)
                 {
-                    if(is_classic)
+                    if(generator->is_classic)
                     {
-                        rb_ary_push(column, rb_float_new(perlin_octaves_3d(_x, _y, _z, p, n)));
+                        rb_ary_push(column, rb_float_new(perlin_octaves_3d(_x, _y, _z, generator->persistence, generator->octave)));
                     }
                     else
                     {
-                        rb_ary_push(column, rb_float_new(octave_noise_4d(n, p, 1.0, _x, _y, _z, seed * SEED_OFFSET)));
+                        rb_ary_push(column, rb_float_new(octave_noise_4d(generator->octave, generator->persistence, 1.0,
+                            _x, _y, _z, generator->seed * SEED_OFFSET)));
                     }
 
                     _z += _interval;
@@ -281,12 +336,19 @@ VALUE Perlin_Generator_chunk3d(const VALUE self, const VALUE x, const VALUE y, c
 /*
 The main initialize function which receives the inputs persistence and octave.
 */
-VALUE Perlin_Generator_init(VALUE self, VALUE seed, VALUE persistence, VALUE octave, VALUE classic)
+VALUE Perlin_Generator_init(const int argc, const VALUE *argv, const VALUE self)
 {
+    VALUE seed, persistence, octave, options;
+
+    rb_scan_args(argc, argv, "31", &seed, &persistence, &octave, &options);
+    if(NIL_P(options)) options = rb_hash_new();
+    Check_Type(options, T_HASH);
+
     Perlin_Generator_set_seed(self, seed);
     Perlin_Generator_set_persistence(self, persistence);
     Perlin_Generator_set_octave(self, octave);
-    Perlin_Generator_set_classic(self, classic);
+
+    Perlin_Generator_set_classic(self, rb_hash_aref(options, ID2SYM(rb_intern("classic"))));
 
     return self;
 }

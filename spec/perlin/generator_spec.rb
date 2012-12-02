@@ -54,8 +54,8 @@ describe Perlin::Generator do
 
   describe "persistence=" do
     it "should set persistence correctly" do
-      @classic.persistence = 12
-      @classic.persistence.should eq 12
+      @classic.persistence = 12.1513
+      @classic.persistence.should eq 12.1513
       @classic.persistence.should be_kind_of Float
     end
   end
