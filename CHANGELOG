@@ -1,9 +1,10 @@
 0.1.2
 -----
 
-* Optmised C code to avoid use of slow Ruby ivars (up to 100% speed improvements!).
+* Optimised C code to avoid use of slow Ruby ivars (up to 50% time reduction!).
 * Added Perlin::Generator#simplex?
-* Added checks for valid values given for Perlin::Generator#octave= and Perlin::Generator#seed=.
+* Added checks for valid values given for Perlin::Generator#octave= and Perlin::Generator#seed= (both must >= 1).
+* Added visualization example/tool using Gosu (which is usable in Ruby 1.8 and 1.9, unlike the old FXRuby/OpenGL example).
 
 0.1.1
 -----

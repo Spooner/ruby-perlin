@@ -48,7 +48,7 @@ VALUE Perlin_Generator_set_seed(const VALUE self, const VALUE seed)
     GENERATOR();
 
     long _seed = NUM2LONG(seed);
-    if(_seed < 0) rb_raise(rb_eArgError, "seed must be >= 0");
+    if(_seed < 1) rb_raise(rb_eArgError, "seed must be >= 1");
     generator->seed = _seed;
 
     return seed;

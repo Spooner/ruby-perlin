@@ -4,7 +4,7 @@ require File.expand_path("../../helper.rb", __FILE__)
 describe Perlin::Generator do
   before :each do
     @classic = Perlin::Generator.new 123, 1.5, 2, :classic => true
-    @simplex = Perlin::Generator.new 0, 1.5, 2
+    @simplex = Perlin::Generator.new 1, 1.5, 2
     @accuracy = 0.00001
   end
 
@@ -51,8 +51,8 @@ describe Perlin::Generator do
       @classic.seed.should be_kind_of Integer
     end
 
-    it "should fail unless >= 0" do
-      lambda { @classic.seed = -1 }.should raise_error ArgumentError, "seed must be >= 0"
+    it "should fail unless >= 1" do
+      lambda { @classic.seed = 0 }.should raise_error ArgumentError, "seed must be >= 1"
     end
   end
 
@@ -105,7 +105,7 @@ describe Perlin::Generator do
     describe "SIMPLEX" do
       describe "[](x, y)" do
         it "should return the appropriate value" do
-          @simplex[0, 1].should be_within(@accuracy).of 0.7600996515471077
+          @simplex[0, 1].should be_within(@accuracy).of 0.05811442311404391
         end
 
         it "should return different values based on seed" do
@@ -117,7 +117,7 @@ describe Perlin::Generator do
 
       describe "[](x, y, z)" do
         it "should return the appropriate value" do
-          @simplex[0, 1, 2].should be_within(@accuracy).of -0.4994023090387083
+          @simplex[0, 1, 2].should be_within(@accuracy).of 0.1565117670752736
         end
       end
     end
@@ -149,7 +149,7 @@ describe Perlin::Generator do
       describe "SIMPLEX" do
         it "should return the appropriate values" do
           chunk = @simplex.chunk 1, 2, 3, 4, 1
-          chunk.should eq [[0.0, 0.19517135798668975, 0.19616149193873283, -5.932618130464163e-07], [0.10886869609093779, 0.10787834101090553, -5.932618130464163e-07, -0.19616171787047829], [-0.0431512326002121, 0.0, 0.260888409614563, 0.45605969740428703]]
+          chunk.should eq [[0.5571850916535853, 0.3451618167752869, 0.016862032963892177, -0.013647447995516454], [0.05558941997362205, -0.023516295066696464, -0.18474763936940472, -0.269085274143078], [-0.1945774374435509, -0.40013138603862897, -0.3741884587955759, -0.1998954436836]]
         end
 
         it "should give the same results, regardless of x/y offset" do
@@ -167,7 +167,7 @@ describe Perlin::Generator do
           @simplex.chunk 1, 2, 3, 4, 1 do |h, x, y|
             arr << [h, x, y]
           end
-          arr.should eq [[0.0, 1.0, 2.0], [0.19517135798668975, 1.0, 3.0], [0.19616149193873283, 1.0, 4.0], [-5.932618130464163e-07, 1.0, 5.0], [0.10886869609093779, 2.0, 2.0], [0.10787834101090553, 2.0, 3.0], [-5.932618130464163e-07, 2.0, 4.0], [-0.19616171787047829, 2.0, 5.0], [-0.0431512326002121, 3.0, 2.0], [0.0, 3.0, 3.0], [0.260888409614563, 3.0, 4.0], [0.45605969740428703, 3.0, 5.0]]
+          arr.should eq [[0.5571850916535853, 1.0, 2.0], [0.3451618167752869, 1.0, 3.0], [0.016862032963892177, 1.0, 4.0], [-0.013647447995516454, 1.0, 5.0], [0.05558941997362205, 2.0, 2.0], [-0.023516295066696464, 2.0, 3.0], [-0.18474763936940472, 2.0, 4.0], [-0.269085274143078, 2.0, 5.0], [-0.1945774374435509, 3.0, 2.0], [-0.40013138603862897, 3.0, 3.0], [-0.3741884587955759, 3.0, 4.0], [-0.1998954436836, 3.0, 5.0]]
         end
       end
 
@@ -209,7 +209,8 @@ describe Perlin::Generator do
       describe "SIMPLEX" do
         it "should return the appropriate values" do
           chunk = @simplex.chunk 6, 5, 4, 3, 2, 1, 1
-          chunk.should eq [[[-0.0506731136544405], [0.13219586780905937]], [[0.32796947870374366], [0.5241572306428496]], [[-0.10557871005195935], [-0.10961889028549195]]]
+          chunk.should eq [[[0.24743621515465233], [-0.3257963616110915]], [[-0.3311894469198845], [-0.26808402993439934]], [[-0.03463088940674653], [0.5211535687819419]]]
+
         end
 
         it "should work with a block" do
@@ -217,7 +218,7 @@ describe Perlin::Generator do
           @simplex.chunk 6, 5, 4, 3, 2, 1, 1 do |h, x, y, z|
             arr << [h, x, y, z]
           end
-          arr.should eq [[-0.0506731136544405, 6.0, 5.0, 4.0], [0.13219586780905937, 6.0, 6.0, 4.0], [0.32796947870374366, 7.0, 5.0, 4.0], [0.5241572306428496, 7.0, 6.0, 4.0], [-0.10557871005195935, 8.0, 5.0, 4.0], [-0.10961889028549195, 8.0, 6.0, 4.0]]
+          arr.should eq [[0.24743621515465233, 6.0, 5.0, 4.0], [-0.3257963616110915, 6.0, 6.0, 4.0], [-0.3311894469198845, 7.0, 5.0, 4.0], [-0.26808402993439934, 7.0, 6.0, 4.0], [-0.03463088940674653, 8.0, 5.0, 4.0], [0.5211535687819419, 8.0, 6.0, 4.0]]
         end
       end
 

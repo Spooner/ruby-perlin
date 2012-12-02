@@ -34,4 +34,9 @@ A Perlin/Simplex noise implementation based of
   s.add_development_dependency 'rake-compiler', '~> 0.8.1'
   s.add_development_dependency 'simplecov', '~> 0.6.4'
   s.add_development_dependency 'launchy', '~> 2.1.0'
+
+  # For example.
+  s.add_development_dependency 'texplay', '~> 0.4.3'
+  s.add_development_dependency 'gosu', '~> 0.7.45'
+  s.add_development_dependency 'fidgit', '~> 0.2.4'
 end
