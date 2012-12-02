@@ -5,6 +5,7 @@
 * Added Perlin::Generator#simplex?
 * Added checks for valid values given for Perlin::Generator#octave= and Perlin::Generator#seed= (both must >= 1).
 * Added visualization example/tool using Gosu (which is usable in Ruby 1.8 and 1.9, unlike the old FXRuby/OpenGL example).
+* FIXED: artifacts introduced into Simplex noise as seed value increases.
 
 0.1.1
 -----
