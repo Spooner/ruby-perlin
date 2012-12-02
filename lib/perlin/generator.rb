@@ -2,15 +2,28 @@ module Perlin
   # Perlin noise generator.
   #
   # @!attribute [rw] seed
+  #   Seed value for the noise pattern.
   #   @return [Integer]
   #
-  # @!attribute [r] persistence
+  # @!attribute [rw] persistence
+  #   Amount of persistence of noise through each octave
   #   @return [Float]
   #
-  # @!attribute [r] octave
+  # @!attribute [rw] octave
+  #   Number of octaves (or iterations) of noise to generate
   #   @return [Integer]
   class Generator
-    # @!method initialize(seed, persistence, octave)
+    # @!method classic?
+    #   @return [Boolean] True for Classic noise, false for Simplex noise.
+
+    # @!method classic=(value)
+    #   @param value [Boolean] True for Classic noise, false for Simplex noise.
+    #   @return [Boolean]
+
+    # @return [Boolean] True for Simplex noise, false for Classic noise.
+    def simplex?; !classic? end
+
+    # @!method initialize(seed, persistence, octave, options={})
     #   Create a noise generator.
     #
     #   Using the same seed will always produce the same pattern. Animate a perlin 'texture' by altering the seed based on time.

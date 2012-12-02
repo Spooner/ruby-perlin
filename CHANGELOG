@@ -2,6 +2,7 @@
 -----
 
 * Optmised C code to avoid use of slow Ruby ivars (up to 100% speed improvements!).
+* Added Perlin::Generator#simplex?
 
 0.1.1
 -----
