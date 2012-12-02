@@ -50,6 +50,10 @@ describe Perlin::Generator do
       @classic.seed.should eq 12
       @classic.seed.should be_kind_of Integer
     end
+
+    it "should fail unless >= 0" do
+      lambda { @classic.seed = -1 }.should raise_error ArgumentError, "seed must be >= 0"
+    end
   end
 
   describe "persistence=" do
@@ -65,6 +69,10 @@ describe Perlin::Generator do
       @classic.octave = 12
       @classic.octave.should eq 12
       @classic.octave.should be_kind_of Integer
+    end
+
+    it "should fail unless >= 1" do
+      lambda { @classic.octave = 0 }.should raise_error ArgumentError, "octave must be >= 1"
     end
   end
 

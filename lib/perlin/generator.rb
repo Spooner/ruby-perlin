@@ -2,7 +2,7 @@ module Perlin
   # Perlin noise generator.
   #
   # @!attribute [rw] seed
-  #   Seed value for the noise pattern.
+  #   Seed value for the noise pattern (>= 0)
   #   @return [Integer]
   #
   # @!attribute [rw] persistence
@@ -10,7 +10,7 @@ module Perlin
   #   @return [Float]
   #
   # @!attribute [rw] octave
-  #   Number of octaves (or iterations) of noise to generate
+  #   Number of octaves (or iterations) of noise to generate (>= 1)
   #   @return [Integer]
   class Generator
     # @!method classic?
@@ -28,9 +28,9 @@ module Perlin
     #
     #   Using the same seed will always produce the same pattern. Animate a perlin 'texture' by altering the seed based on time.
     #
-    #   @param seed [Integer] Seed value to create a different pattern.
-    #   @param persistence [Float] Used to generate different frequencies/amplitudes of output.
-    #   @param octave [Integer] Number of iterations to run (higher number of octaves takes more time)
+    #   @param seed [Integer] Seed value to create a different pattern (must be >= 0).
+    #   @param persistence [Float] Used to generate different frequencies/amplitudes of output .
+    #   @param octave [Integer] Number of iterations to run (higher number of octaves takes more time) (must be >= 1)
     #   @option options :classic [Boolean] (false) Whether to use the slower Classic algorithm, rather than default (and much faster) Simplex.
 
 

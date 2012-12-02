@@ -3,6 +3,7 @@
 
 * Optmised C code to avoid use of slow Ruby ivars (up to 100% speed improvements!).
 * Added Perlin::Generator#simplex?
+* Added checks for valid values given for Perlin::Generator#octave= and Perlin::Generator#seed=.
 
 0.1.1
 -----

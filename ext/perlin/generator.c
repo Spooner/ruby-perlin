@@ -46,7 +46,11 @@ void Perlin_Generator_free(PerlinGenerator* generator)
 VALUE Perlin_Generator_set_seed(const VALUE self, const VALUE seed)
 {
     GENERATOR();
-    generator->seed = NUM2LONG(seed);
+
+    long _seed = NUM2LONG(seed);
+    if(_seed < 0) rb_raise(rb_eArgError, "seed must be >= 0");
+    generator->seed = _seed;
+
     return seed;
 }
 
@@ -72,7 +76,11 @@ VALUE Perlin_Generator_get_persistence(const VALUE self)
 VALUE Perlin_Generator_set_octave(const VALUE self, const VALUE octave)
 {
     GENERATOR();
-    generator->octave = NUM2UINT(octave);
+
+    long _octave = NUM2LONG(octave);
+    if(_octave < 1) rb_raise(rb_eArgError, "octave must be >= 1");
+    generator->octave = _octave;
+
     return octave;
 }
 
