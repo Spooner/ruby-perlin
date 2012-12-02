@@ -87,7 +87,7 @@ VALUE Perlin_Generator_set_octave(const VALUE self, const VALUE octave)
 VALUE Perlin_Generator_get_octave(const VALUE self)
 {
     GENERATOR();
-    return UINT2NUM(generator->octave);
+    return LONG2NUM(generator->octave);
 }
 
 VALUE Perlin_Generator_set_classic(const VALUE self, const VALUE classic)

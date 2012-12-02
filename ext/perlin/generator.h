@@ -44,8 +44,8 @@ VALUE Perlin_Generator_init(const int argc, const VALUE *argv, const VALUE self)
 typedef struct _PerlinGenerator
 {
     bool is_classic; // True if Classic, false if Simplex.
-    unsigned long seed; // >= 1
-    unsigned int octave; // >= 1
+    long seed; // >= 1
+    long octave; // >= 1
     double persistence;
 } PerlinGenerator;
 
