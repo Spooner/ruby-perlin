@@ -1,6 +1,17 @@
-require 'perlin'
+# WARNING:
+#   This code WILL NOT work with Ruby 1.9, since FXRuby/OpenGL are not compatible with the newer Ruby version.
+#   Since gem/bundler can't be persuaded to only require gems based on Ruby version, you'll have to manage the gems
+#   yourself.
+#
+#   Requiring 'fox16' actually uses the 'fxruby' gem, which is no longer supported.
+#
+#   Requiring 'opengl' actually uses the 'ruby-opengl' gem, not the 'opengl' gem (they are only compatible with Ruby 1.8
+#   and Ruby 1.9, respectively).
+
 require 'rubygems'
+require 'perlin'
 require 'fox16'
+require 'opengl'
 
 # Base framework borrowed from: http://www.fxruby.org/examples/gltest.rb
 
