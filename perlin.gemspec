@@ -15,13 +15,13 @@ A Perlin/Simplex noise implementation based of
 <http://freespace.virgin.net/hugo.elias/models/m_perlin.htm>. Implemented as a Ruby C extension.
   END
 
-  s.email = %w<mojobojo@gmail.com>
+  s.email = %w<bil.bagpuss@gmail.com mojobojo@gmail.com>
   s.files = Dir.glob %w<CHANGELOG LICENSE Rakefile README.md lib/**/*.{rb,yml} lib ext/**/*.{c,h,rb} examples/**/*.* spec/**/*.*>
 
   # Only do this while creating a fat binary gem WHEN ON Windows!
   #####s.files << Dir["lib/**/*.so"]
 
-  s.homepage = 'https://github.com/boj/ruby-perlin'
+  s.homepage = 'https://github.com/spooner/ruby-perlin'
   s.licenses = %w<MIT>
   s.extensions << 'ext/perlin/extconf.rb'
   s.rubyforge_project = 'ruby-perlin'
