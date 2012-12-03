@@ -1,4 +1,4 @@
-0.1.2
+0.2.0
 -----
 
 * Optimised C code to avoid use of slow Ruby ivars (up to 50% time reduction!).
