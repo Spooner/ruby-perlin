@@ -22,10 +22,10 @@ float perlin_smooth_noise_2d(const int x, const int y)
 
 float perlin_interpolated_noise_2d(const float x, const float y)
 {
-    const int integer_X         = (int)x;
+    const int integer_X         = floor(x);
     const float fractional_X    = x - integer_X;
 
-    const int integer_Y         = (int)y;
+    const int integer_Y         = floor(y);
     const float fractional_Y    = y - integer_Y;
 
     const float v1 = perlin_smooth_noise_2d(integer_X,         integer_Y);

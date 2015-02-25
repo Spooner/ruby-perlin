@@ -1,3 +1,7 @@
+0.2.1
+-----
+* Fix for negative x/y in Classic noise. Thanks Shawn Anderson!
+
 0.2.0
 -----
 
