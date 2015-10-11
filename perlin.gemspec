@@ -30,13 +30,13 @@ A Perlin/Simplex noise implementation based of
 
   s.add_development_dependency 'RedCloth', '~> 4.2.9'
   s.add_development_dependency 'yard', '~> 0.8.2.1'
-  s.add_development_dependency 'rspec', '~> 2.10.0'
+  s.add_development_dependency 'rspec', '~> 3.3'
   s.add_development_dependency 'rake-compiler', '~> 0.8.1'
   s.add_development_dependency 'simplecov', '~> 0.6.4'
   s.add_development_dependency 'launchy', '~> 2.1.0'
 
   # For example.
   s.add_development_dependency 'texplay', '~> 0.4.3'
-  s.add_development_dependency 'gosu', '~> 0.7.45'
+  s.add_development_dependency 'gosu', '~> 0.7'
   s.add_development_dependency 'fidgit', '~> 0.2.4'
 end
